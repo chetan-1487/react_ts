@@ -3,7 +3,6 @@
 
 "use client";
 
-import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 // in the useSelector we have the access of the state
@@ -11,11 +10,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { removeTodo, searchTodo } from "@/features/todo/todoSlics";
 
 
-
 export async function getData() {
-  const res = await fetch('https://jsonplaceholder.typicode.com/posts', {
-    cache: 'no-store', // or 'force-cache'
-  });
+  const res = await fetch('https://dummyjson.com/products');
 
   if (!res.ok) {
     throw new Error('Failed to fetch data');
@@ -23,9 +19,6 @@ export async function getData() {
 
   return res.json();
 }
-
-
-
 
 
 export default function Home() {

@@ -13,6 +13,8 @@ import todoReducer from "../features/todo/todoSlics";
 // redux store ko react app se jodta h
 // component ko state and dispatch deta h
 
+//store is the global state
+
 export const store = configureStore({
   reducer: todoReducer,
 });

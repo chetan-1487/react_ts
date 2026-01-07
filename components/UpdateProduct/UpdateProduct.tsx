@@ -23,7 +23,7 @@ const UpdateProduct = ({ productId }: ProductProps) => {
   const { register, handleSubmit, reset } = useForm<FormValues>();
 
   const product = useSelector((state: any) =>
-    state.todos.find((p: any) => p.id === productId)
+    state.todos?.find((p: any) => String(p.id) === productId)
   );
 
   useEffect(() => {
@@ -38,11 +38,10 @@ const UpdateProduct = ({ productId }: ProductProps) => {
 
   const onSubmit = (data: FormValues) => {
     dispatch(updateTodo(data));
-    console.log(data);
     router.push("/");
   };
   
-  if (!product) return <p>Product not found</p>;
+  if (!product) return <h1>Product not found</h1>;
 
   return (
     <div>
