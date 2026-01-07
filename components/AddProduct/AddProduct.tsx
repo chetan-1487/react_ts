@@ -1,9 +1,10 @@
-'use client'
+"use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
-import { useProducts } from "../context/productContext";
+import { useDispatch} from "react-redux";
+import { addTodo } from "@/features/todo/todoSlics";
 
 interface IFormInput {
   productId: string;
@@ -13,32 +14,26 @@ interface IFormInput {
 
 const AddProduct = () => {
   const { register, handleSubmit } = useForm<IFormInput>();
-  const { setProducts } = useProducts();
   const router = useRouter();
 
+  const [input, setInput] = useState("");
+  const dispatch = useDispatch();
+
   const onSubmit = (data: IFormInput) => {
-    console.log(data)
-    const newProduct = {
-    ...data,
-    id: data.productId,
-  };
-    setProducts((prev: any) => [...prev, newProduct]);
-    router.push("/");
+    dispatch(addTodo(data));
+    setInput("");
+    router.push("/")
   };
 
   return (
     <div>
       <h1 style={{ textAlign: "center" }}>Add products</h1>
-      <br /><br />
+      <br />
+      <br />
 
       <form onSubmit={handleSubmit(onSubmit)}>
-        <label htmlFor="productId">Product Id</label>
         <br />
-        <input
-          id="productId"
-          {...register("productId", { required: true, maxLength: 20 })}
-        />
-        <br /><br />
+        <br />
 
         <label htmlFor="productName">Product Name</label>
         <br />
@@ -46,15 +41,14 @@ const AddProduct = () => {
           id="productName"
           {...register("productName", { required: true })}
         />
-        <br /><br />
+        <br />
+        <br />
 
         <label htmlFor="category">Category</label>
         <br />
-        <input
-          id="category"
-          {...register("category", { required: true })}
-        />
-        <br /><br />
+        <input id="category" {...register("category", { required: true })} />
+        <br />
+        <br />
 
         <button type="submit">Add new Product</button>
       </form>

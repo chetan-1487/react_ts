@@ -1,30 +1,37 @@
 // without use-client it will show an error:
 // "You're importing a component that needs `useState`. This React Hook only works in a Client Component. To fix, mark the file (or its parent) with the "use client" directive."
 
-
-'use client'
+"use client";
 
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { useProducts } from "@/components/context/productContext";
+import { useDispatch, useSelector } from "react-redux";
+// in the useSelector we have the access of the state
+
+import { removeTodo, searchTodo } from "@/features/todo/todoSlics";
+
+
+
+export async function getData() {
+  const res = await fetch('https://jsonplaceholder.typicode.com/posts', {
+    cache: 'no-store', // or 'force-cache'
+  });
+
+  if (!res.ok) {
+    throw new Error('Failed to fetch data');
+  }
+
+  return res.json();
+}
+
+
+
 
 
 export default function Home() {
-
   const router = useRouter();
-
-  const { products, setProducts } = useProducts();
-
-  const [search, setSearch] = useState("")
-
-  const filteredProducts = useMemo(()=>{
-    return products.filter((p:any) => p.productName.toLowerCase().includes(search.toLowerCase())
-  );
-  },[products, search]) 
-
-  function deleteProduct(id: string){
-    setProducts(products.filter((product:any)=>product.id!==id))
-  }
+  const todos = useSelector((state: any) => state.todos);
+  const dispatch = useDispatch();
 
   return (
     <>
@@ -34,32 +41,59 @@ export default function Home() {
 
       <br/><br/>
       <label htmlFor="search">Search Product </label>
-      <textarea placeholder="Search Products" onChange={(e) => setSearch(e.target.value)} id="Search" />
+      <textarea placeholder="Search Products" onChange={(e) => {
+          dispatch(searchTodo(e.target.value))}}
+          id="search"
+      />
       <br/><br/>
 
-      <table style={{border:"1px solid black", borderCollapse: "collapse"}}>
+      <table style={{ border:"1px solid black"}}>
         <thead>
           <tr>
-            <td style={{ border: "1px solid black", padding: "8px" }}><b>ProductId</b></td>
-            <td style={{ border: "1px solid black", padding: "8px" }}><b>ProductName</b></td>
-            <td style={{ border: "1px solid black", padding: "8px" }}><b>Category</b></td>
-            <td style={{ border: "1px solid black", padding: "8px" }}><b>Actions</b></td>
+            <td style={{ border: "1px solid black", padding: "8px" }}>
+              <b>ProductId</b>
+            </td>
+            <td style={{ border: "1px solid black", padding: "8px" }}>
+              <b>ProductName</b>
+            </td>
+            <td style={{ border: "1px solid black", padding: "8px" }}>
+              <b>Category</b>
+            </td>
+            <td style={{ border: "1px solid black", padding: "8px" }}>
+              <b>Actions</b>
+            </td>
           </tr>
         </thead>
         <tbody>
-          {filteredProducts.map((product:any)=>(
-            <tr  key={product.id}>
-              <td style={{ border: "1px solid black", padding: "8px" }}>{product.id}</td>
-              <td style={{ border: "1px solid black", padding: "8px" }}>{product.productName}</td>
-              <td style={{ border: "1px solid black", padding: "8px" }}>{product.category}</td>
+          {todos.map((product: any) => (
+            <tr key={product.id}>
               <td style={{ border: "1px solid black", padding: "8px" }}>
-              <button onClick={()=>{
-                router.push(`/pages/update/${product.id}`)
-              }} style={{backgroundColor:"yellow"}}>Update</button>
+                {product.id}
+              </td>
+              <td style={{ border: "1px solid black", padding: "8px" }}>
+                {product.productName}
+              </td>
+              <td style={{ border: "1px solid black", padding: "8px" }}>
+                {product.category}
+              </td>
+              <td style={{ border: "1px solid black", padding: "8px" }}>
+                <button
+                  onClick={() => {
+                    router.push(`/pages/update/${product.id}`);
+                  }}
+                  style={{ backgroundColor: "yellow" }}
+                >
+                  Update
+                </button>
 
-              <button style={{backgroundColor:"red"}} onClick={()=>{
-                deleteProduct(product.id);
-              }}>Delete</button>
+                <button
+                  style={{ backgroundColor: "red" }}
+                  onClick={() => {
+                    dispatch(removeTodo(product.id));
+                  }}
+                >
+                  Delete
+                </button>
               </td>
             </tr>
           ))}

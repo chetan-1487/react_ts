@@ -1,10 +1,10 @@
-'use client'
+'use client';
 
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
-import { useProducts } from "@/components/context/productContext";
-import { Product } from "../constants/productData";
+import { useDispatch, useSelector } from "react-redux";
+import { updateTodo } from "@/features/todo/todoSlics";
 
 interface ProductProps {
   productId: string;
@@ -18,13 +18,13 @@ interface FormValues {
 
 const UpdateProduct = ({ productId }: ProductProps) => {
   const router = useRouter();
-  const { products, updateProduct } = useProducts();
-
-  const product = products.find(
-    (item: Product) => item.id === productId
-  );
+  const dispatch = useDispatch();
 
   const { register, handleSubmit, reset } = useForm<FormValues>();
+
+  const product = useSelector((state: any) =>
+    state.todos.find((p: any) => p.id === productId)
+  );
 
   useEffect(() => {
     if (product) {
@@ -36,52 +36,37 @@ const UpdateProduct = ({ productId }: ProductProps) => {
     }
   }, [product, reset]);
 
-  if (!product) {
-    return <h1>Product does not exist.</h1>;
-  }
-
   const onSubmit = (data: FormValues) => {
-    updateProduct(data);
+    dispatch(updateTodo(data));
     console.log(data);
     router.push("/");
   };
+  
+  if (!product) return <p>Product not found</p>;
 
   return (
     <div>
-      <h1>Update Product Details:</h1>
+      <h1>Update Product Details</h1>
 
       <form onSubmit={handleSubmit(onSubmit)}>
-        <label htmlFor="id">Product Id</label>
+        <label>Product Id</label>
         <br />
-        <input
-          id="id"
-          readOnly
-          {...register("id")}
-        />
+        <input readOnly {...register("id")} />
         <br /><br />
 
-        <label htmlFor="productName">Product Name</label>
+        <label>Product Name</label>
         <br />
-        <input
-          id="productName"
-          {...register("productName", { required: true })}
-        />
+        <input {...register("productName", { required: true })} />
         <br /><br />
 
-        <label htmlFor="category">Category</label>
+        <label>Category</label>
         <br />
-        <input
-          id="category"
-          {...register("category", { required: true })}
-        />
+        <input {...register("category", { required: true })} />
         <br /><br />
 
         <button type="submit">Update</button>
         &nbsp;
-        <button
-          type="button"
-          onClick={() => router.push("/")}
-        >
+        <button type="button" onClick={() => router.push("/")}>
           Exit
         </button>
       </form>

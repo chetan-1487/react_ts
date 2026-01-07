@@ -2,6 +2,7 @@
 import { createContext, useContext, useState } from "react";
 import { data, Product } from "@/components/constants/productData";
 
+//createContext() global store data bnata h
 const ProductContext = createContext<any>(null);
 
 export function ProductProvider({ children }: any) {
@@ -28,3 +29,4 @@ export function ProductProvider({ children }: any) {
 }
 
 export const useProducts = () => useContext(ProductContext);
+// useContext() hume global data share karne deta h bina props pass kiye..
