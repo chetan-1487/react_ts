@@ -2,6 +2,7 @@
 
 import { configureStore } from "@reduxjs/toolkit";
 import todoReducer from "../features/todo/todoSlics";
+import categoryReducer  from "@/features/category/categoryReducer";
 
 //redux-toolkit  -->  redux ka engine h actually me redux logic handle karta h.
 // 1) Store banate hain
@@ -16,7 +17,10 @@ import todoReducer from "../features/todo/todoSlics";
 //store is the global state
 
 export const store = configureStore({
-  reducer: todoReducer,
+  reducer:{
+    todoData: todoReducer,
+    categoryData: categoryReducer,
+  }
 });
 
 

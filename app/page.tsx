@@ -11,7 +11,9 @@ import { removeTodo, searchTodo } from "@/features/todo/todoSlics";
 
 
 export async function getData() {
-  const res = await fetch('https://dummyjson.com/products');
+  const res = await fetch('https://dummyjson.com/products',{
+    cache:"no-cache"
+  });
 
   if (!res.ok) {
     throw new Error('Failed to fetch data');
@@ -23,7 +25,7 @@ export async function getData() {
 
 export default function Home() {
   const router = useRouter();
-  const todos = useSelector((state: any) => state.todos);
+  const todos = useSelector((state: any) => state.todoData.todos);
   const dispatch = useDispatch();
 
   return (
@@ -37,7 +39,11 @@ export default function Home() {
       <textarea placeholder="Search Products" onChange={(e) => {
           dispatch(searchTodo(e.target.value))}}
           id="search"
+          style={{marginRight:"15%"}}
       />
+      <span>
+      <button style={{backgroundColor:"green", paddingLeft:"10px"}} onClick={()=>{router.push("/CategoryPage")}}>Category details</button>
+      </span>
       <br/><br/>
 
       <table style={{ border:"1px solid black"}}>

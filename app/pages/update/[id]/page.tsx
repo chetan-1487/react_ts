@@ -3,6 +3,7 @@
 import { useParams } from 'next/navigation';
 import { data } from '@/components/constants/productData';
 import UpdateProduct from '@/components/UpdateProduct/UpdateProduct';
+import { Product } from '@/components/constants/productData';
 
 
 

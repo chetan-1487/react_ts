@@ -23,7 +23,7 @@ const UpdateProduct = ({ productId }: ProductProps) => {
   const { register, handleSubmit, reset } = useForm<FormValues>();
 
   const product = useSelector((state: any) =>
-    state.todos?.find((p: any) => String(p.id) === productId)
+    state.todoData.todos?.find((p: any) => String(p.id) === productId)
   );
 
   useEffect(() => {
