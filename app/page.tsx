@@ -8,45 +8,62 @@ import { useDispatch, useSelector } from "react-redux";
 // in the useSelector we have the access of the state
 
 import { removeTodo, searchTodo } from "@/features/todo/todoSlics";
-
-
-export async function getData() {
-  const res = await fetch('https://dummyjson.com/products',{
-    cache:"no-cache"
-  });
-
-  if (!res.ok) {
-    throw new Error('Failed to fetch data');
-  }
-
-  return res.json();
-}
-
+import { fetchTodos } from "@/features/todo/todoSlics";
+import { useEffect } from "react";
 
 export default function Home() {
   const router = useRouter();
   const todos = useSelector((state: any) => state.todoData.todos);
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    if (!todos.length) {
+      (async () => {
+        await dispatch(fetchTodos());
+      })();
+    }
+  }, []);
+
   return (
     <>
-      <h1 style={{textAlign:"center", textDecoration:"underline"}}>Products</h1>
+      <h1 style={{ textAlign: "center", textDecoration: "underline" }}>
+        Products
+      </h1>
 
-      <button style={{backgroundColor:"green"}} onClick={()=>{router.push("/pages/add")}}>Add New Product</button>
+      <button
+        style={{ backgroundColor: "green" }}
+        onClick={() => {
+          router.push("/pages/add");
+        }}
+      >
+        Add New Product
+      </button>
 
-      <br/><br/>
+      <br />
+      <br />
       <label htmlFor="search">Search Product </label>
-      <textarea placeholder="Search Products" onChange={(e) => {
-          dispatch(searchTodo(e.target.value))}}
-          id="search"
-          style={{marginRight:"15%"}}
+      <textarea
+        placeholder="Search Products"
+        onChange={(e) => {
+          dispatch(searchTodo(e.target.value));
+        }}
+        id="search"
+        style={{ marginRight: "15%" }}
       />
       <span>
-      <button style={{backgroundColor:"green", paddingLeft:"10px"}} onClick={()=>{router.push("/CategoryPage")}}>Category details</button>
+        <button
+          style={{ backgroundColor: "green", paddingLeft: "10px" }}
+          onClick={() => {
+            router.push("/CategoryPage");
+          }}
+        >
+          Category details
+        </button>
       </span>
-      <br/><br/>
+      <br />
+      <br />
 
-      <table style={{ border:"1px solid black"}}>
+      <table style={{ border: "1px solid black" }}>
         <thead>
           <tr>
             <td style={{ border: "1px solid black", padding: "8px" }}>

@@ -2,22 +2,21 @@
 // slice is the advanced version of the reducers(functionality)
 "use client";
 
-import { createSlice, nanoid } from "@reduxjs/toolkit";
-import { getData } from "@/app/page";
+import { createSlice, nanoid, createAsyncThunk } from "@reduxjs/toolkit";
+import { Product } from "@/components/constants/productData";
 
-async function name() {
-  let data=await getData();
-  return data.products;
-}
 
-let data =await name();
+export const fetchTodos = createAsyncThunk(
+  "todo/fetchTodos",
+  async () => {
+    const res = await fetch("https://dummyjson.com/products");
+    const data = await res.json();
+    return data.products;
+  }
+);
 
 const initialState = {
-  todos: data.map((product: any) => ({
-    id: product.id,
-    productName: product.title,
-    category: product.category,
-  })),
+  todos:[]
 };
 
 export const todoSlice = createSlice({
@@ -58,6 +57,25 @@ export const todoSlice = createSlice({
       }
     },
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchTodos.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchTodos.fulfilled, (state, action) => {
+        state.loading = false;
+        state.todos = action.payload.map((p:any) => ({
+          id: nanoid(),
+          productName: p.title,
+          category: p.category,
+        }));
+        // state.allTodos = state.todos;
+      })
+      .addCase(fetchTodos.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      });
+  }
 });
 
 export const { addTodo, removeTodo, searchTodo, updateTodo } = todoSlice.actions;
